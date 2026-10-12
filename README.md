@@ -65,7 +65,7 @@ Version: `8fa46c8f3c6b1407925942f94e888fb5d2c1bbae (no tagged releases, archived
 Has vendor confirmed: `No`
 Attack type: `Local`
 
-Impact: Code Execution, Information Disclosure, Denial of Service（Privilege escalation 不勾选）
+Impact: Code Execution, Information Disclosure, Denial of Service
 
 Affected component(s):
 `Src/comnAudio/AudioPlayer.cpp, m_bitSource audio buffer management`
