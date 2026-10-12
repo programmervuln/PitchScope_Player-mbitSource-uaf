@@ -1,0 +1,46 @@
+// poc_mbitSource_uaf.cpp
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+char* g_audioBuffer = nullptr;
+
+// Simulate BitSourceStatic::Alloc_Static_Block
+bool Alloc_Static_Block(long numBytes)
+{
+    if(g_audioBuffer)
+        free(g_audioBuffer);
+    g_audioBuffer = static_cast<char*>(malloc(numBytes));
+    if(!g_audioBuffer)
+    {
+        return false;
+    }
+    memset(g_audioBuffer, 0x41, numBytes);
+    return true;
+}
+
+// Simulate BitSourceStatic::ReleaseAudioBuffer
+void ReleaseAudioBuffer()
+{
+    free(g_audioBuffer);
+    // Intentionally leave dangling pointer, do NOT null out
+}
+
+// Simulate AudioStaticPlayer reading audio sample after buffer release
+void ReadAudioSample()
+{
+    char val = g_audioBuffer[4];
+    (void)val;
+}
+
+int main()
+{
+    Alloc_Static_Block(64);
+
+    ReleaseAudioBuffer(); // Free heap audio buffer, pointer becomes dangling
+
+    ReadAudioSample();    // Trigger heap-use-after-free read
+
+    return 0;
+}
+
